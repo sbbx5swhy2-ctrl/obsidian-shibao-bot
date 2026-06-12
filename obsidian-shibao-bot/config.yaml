@@ -1,0 +1,118 @@
+﻿vault_path: C:\Users\86162\iCloudDrive\Obsidian\obsidian-claude-gradient
+root_folder: 时报
+timezone: Asia/Shanghai
+daily_run_time: 08:30
+language: zh-CN
+max_items_per_day: 36
+max_items_per_category: 8
+summary_top_n: 6
+safe_write:
+  enable_lock: true
+  backup_before_write: true
+  max_backups_per_file: 5
+  atomic_replace: true
+content_preferences:
+  style: 简洁、重点清楚、适合 Obsidian 复习
+  avoid:
+  - 长篇解释
+  - 过多理论
+  - 标题层级太深
+  - 没有来源的结论
+  - 编造摘要
+  include_personal_value:
+  - 对 AI 学习有什么价值
+  - 对视觉传达专业有什么价值
+  - 对英语学习有什么价值
+  - 对兼职/副业有什么启发
+categories:
+- name: 国内大事
+  priority: 8
+- name: 国际大事
+  priority: 8
+- name: 财经商业
+  priority: 7
+- name: 科技与AI
+  priority: 10
+- name: 设计与创意
+  priority: 9
+- name: 英语与学习
+  priority: 7
+- name: 机会与副业
+  priority: 8
+- name: 社会民生
+  priority: 6
+rss_sources:
+  国内大事:
+  - https://feedx.net/rss/chinadaily.xml
+  - http://www.xinhuanet.com/english/rss/worldrss.xml
+  国际大事:
+  - https://feeds.bbci.co.uk/news/world/rss.xml
+  - https://rss.nytimes.com/services/xml/rss/nyt/World.xml
+  - https://www.aljazeera.com/xml/rss/all.xml
+  财经商业:
+  - https://rss.nytimes.com/services/xml/rss/nyt/Business.xml
+  - https://feeds.bbci.co.uk/news/business/rss.xml
+  - https://www.cnbc.com/id/100003114/device/rss/rss.html
+  科技与AI:
+  - https://feeds.feedburner.com/TechCrunch
+  - https://www.theverge.com/rss/index.xml
+  - https://feeds.arstechnica.com/arstechnica/index
+  - https://hnrss.org/frontpage
+  - https://www.wired.com/feed/rss
+  - https://feeds.bbci.co.uk/news/technology/rss.xml
+  设计与创意:
+  - https://www.designboom.com/feed/
+  - https://www.dezeen.com/feed/
+  - https://www.smashingmagazine.com/feed/
+  - https://www.creativeboom.com/feed/
+  英语与学习:
+  - https://www.bbc.co.uk/learningenglish/english/features/6-minute-english/rss
+  - https://learningenglish.voanews.com/api/
+  机会与副业:
+  - https://rss.nytimes.com/services/xml/rss/nyt/Economy.xml
+  - https://feeds.bbci.co.uk/news/education/rss.xml
+  社会民生:
+  - https://rss.nytimes.com/services/xml/rss/nyt/US.xml
+  - https://feeds.bbci.co.uk/news/rss.xml
+important_keywords:
+- AI
+- OpenAI
+- ChatGPT
+- 苹果
+- Apple
+- 微软
+- Microsoft
+- 英伟达
+- NVIDIA
+- 发布
+- 宣布
+- 重大
+- 政策
+- 就业
+- 考试
+- 雅思
+- 设计
+- 视觉
+- 趋势
+- 兼职
+- 副业
+- 大学生
+- 奖项
+- 比赛
+- 实习
+- 利率
+- 央行
+- 经济
+- 冲突
+- 战争
+- 地震
+- 总统
+- 总理
+source_policy:
+  allow_rss: true
+  allow_public_webpage: false
+  allow_login_required_site: false
+  allow_paid_site: false
+  allow_scraping_xianyu: false
+  allow_scraping_xiaohongshu: false
+  note: 先只使用 RSS 或明确公开的 feed，不爬需要登录、验证码、付费或平台限制的网站。

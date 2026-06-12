@@ -1,0 +1,6 @@
+﻿feedparser
+PyYAML
+python-dateutil
+tzdata
+pytest
+requests
