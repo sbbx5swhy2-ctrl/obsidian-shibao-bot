@@ -62,9 +62,14 @@ class EmailSender:
             msg.attach(MIMEText(html_body, "html", "utf-8"))
 
             context = ssl.create_default_context()
+            logger.info("正在建立 SMTP 连接...")
             with smtplib.SMTP(self.smtp_host, self.smtp_port, timeout=30) as server:
+                server.set_debuglevel(1)
+                logger.info("正在 STARTTLS...")
                 server.starttls(context=context)
+                logger.info("正在登录...")
                 server.login(self.username, self.password)
+                logger.info("正在发送...")
                 server.sendmail(self.from_addr, self.to_addr, msg.as_string())
 
             logger.info(f"HTML 邮件已发送 → {self.to_addr}")

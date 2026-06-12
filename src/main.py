@@ -190,8 +190,28 @@ class ShibaoBot:
             timezone=config.timezone,
         )
 
-        # 15. 写入文件
-        if self.writer:
+        # 15. 发送邮件（email 模式）
+        if mode == "email":
+            email_sender = EmailSender()
+            if email_sender.is_configured():
+                html_body = render_email_html(
+                    today_str=self.today_str,
+                    summaries=summaries,
+                    ranked_items=limited_ranked,
+                    grouped_items=limited,
+                    useful_tips=useful_tips,
+                    english_sentence=english_sentence,
+                    has_content=has_content,
+                )
+                subject = f"时报 | {self.today_str}"
+                ok = email_sender.send_dual(html_body, md_content, subject)
+                if not ok:
+                    logger.error("邮件发送失败，请检查 SMTP 配置和网络连接")
+            else:
+                logger.warning("邮件模式启用但未配置环境变量，跳过发送")
+
+        # 16. 写入文件（obsidian 模式）
+        if mode == "obsidian" and self.writer:
             success = self.writer.write_daily_file(md_content, self.today_str)
             if success:
                 file_path = self.writer.get_today_file_path(self.today_str)
