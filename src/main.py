@@ -68,26 +68,33 @@ class ShibaoBot:
         self.logger.info(f"vault_path: {vault_path}")
         self.logger.info(f"root_folder: {root_folder}")
 
-        # 3. 检查 vault_path
-        if not vault_path or vault_path == "OBSIDIAN_VAULT_PATH":
-            self.logger.error(
-                "vault_path 未设置。请修改 config.yaml 中的 vault_path 为你的 Obsidian 仓库路径。"
-            )
-            return 1
+        # 3. 读取运行模式
+        mode = os.environ.get("SHIBAO_MODE", "obsidian")
+        self.run_mode = mode
 
-        if not os.path.exists(vault_path):
-            self.logger.error(
-                f"vault_path 不存在: {vault_path}\n"
-                "请检查 iCloud Drive 是否已同步到本机。"
-            )
-            return 1
+        # 4. 检查 vault_path（仅 obsidian 模式需要）
+        if mode == "obsidian":
+            if not vault_path or vault_path == "OBSIDIAN_VAULT_PATH":
+                self.logger.error(
+                    "vault_path 未设置。请修改 config.yaml 中的 vault_path 为你的 Obsidian 仓库路径。"
+                )
+                return 1
 
-        # 4. 验证目标路径
-        try:
-            resolve_vault_root(vault_path, root_folder)
-        except Exception as e:
-            self.logger.error(f"路径检查失败: {e}")
-            return 1
+            if not os.path.exists(vault_path):
+                self.logger.error(
+                    f"vault_path 不存在: {vault_path}\n"
+                    "请检查 iCloud Drive 是否已同步到本机。"
+                )
+                return 1
+
+            # 验证目标路径
+            try:
+                resolve_vault_root(vault_path, root_folder)
+            except Exception as e:
+                self.logger.error(f"路径检查失败: {e}")
+                return 1
+        else:
+            self.logger.info("email 模式，跳过 Obsidian 仓库检查")
 
         # 5. 初始化写入器
         self.writer = ObsidianWriter(self.config, self.project_dir)
@@ -104,7 +111,6 @@ class ShibaoBot:
         self.lock = lock
 
         try:
-            mode = os.environ.get("SHIBAO_MODE", "obsidian")
             return self._do_work(mode=mode)
         finally:
             if self.lock:
