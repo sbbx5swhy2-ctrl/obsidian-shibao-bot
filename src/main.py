@@ -96,8 +96,11 @@ class ShibaoBot:
         else:
             self.logger.info("email 模式，跳过 Obsidian 仓库检查")
 
-        # 5. 初始化写入器
-        self.writer = ObsidianWriter(self.config, self.project_dir)
+        # 5. 初始化写入器（仅 obsidian 模式需要写入 Obsidian）
+        if mode == "obsidian":
+            self.writer = ObsidianWriter(self.config, self.project_dir)
+        else:
+            self.writer = None
 
         # 6. 获取锁
         lock = Lock(
