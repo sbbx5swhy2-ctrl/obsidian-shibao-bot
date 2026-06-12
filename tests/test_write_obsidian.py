@@ -69,6 +69,49 @@ class TestWriteObsidian:
         assert "这是我的手动测试内容，不能被覆盖。" in result
         assert "# Updated Auto" in result
 
+    def test_refresh_generated_header_when_preserving_user_section(self):
+        """测试更新旧日报时刷新自动生成头部"""
+        writer = self._make_writer()
+        os.makedirs(writer.resolved_root, exist_ok=True)
+
+        old_content = (
+            "---\n"
+            "updated: 2026-06-12 08:30\n"
+            "---\n\n"
+            "> 自动生成时间：2026-06-12 08:30\n\n"
+            f"{MARKER_START}\n"
+            "## 旧内容\n"
+            f"{MARKER_END}\n\n"
+            "---\n\n"
+            "## 我的记录\n\n"
+            "保留这段手写内容。"
+        )
+        writer.write_daily_file(old_content)
+
+        new_content = (
+            "---\n"
+            "updated: 2026-06-12 22:30\n"
+            "---\n\n"
+            "> 自动生成时间：2026-06-12 22:30\n\n"
+            f"{MARKER_START}\n"
+            "## 新内容\n"
+            f"{MARKER_END}\n\n"
+            "---\n\n"
+            "## 我的记录\n\n"
+            "默认占位。"
+        )
+        writer.write_daily_file(new_content)
+
+        file_path = writer.get_today_file_path()
+        with open(file_path, "r", encoding="utf-8") as f:
+            result = f.read()
+
+        assert "updated: 2026-06-12 22:30" in result
+        assert "自动生成时间：2026-06-12 22:30" in result
+        assert "## 新内容" in result
+        assert "保留这段手写内容。" in result
+        assert "默认占位。" not in result
+
     def test_index_creation(self):
         """测试首页创建"""
         writer = self._make_writer()

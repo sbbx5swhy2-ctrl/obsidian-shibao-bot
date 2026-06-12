@@ -114,6 +114,51 @@ python -c "from src.validate_sources import validate_source; print(validate_sour
 
 ## 自动运行
 
+### GitHub Actions 每日邮件
+
+仓库已内置 `.github/workflows/daily-report.yml`，会在每天北京时间 06:00 自动运行。
+
+邮件会发送一封：
+- 正文：适合直接阅读的 HTML 日报
+- 附件：同一份内容的 Markdown 文件，例如 `shibao-2026-06-12.md`
+
+#### 需要配置的 GitHub Secrets
+
+进入 GitHub 仓库：
+
+`Settings` -> `Secrets and variables` -> `Actions` -> `New repository secret`
+
+至少选择一种发送方式。
+
+Resend 方式：
+
+| Secret | 说明 |
+|---|---|
+| `SHIBAO_RESEND_KEY` | Resend API Key |
+| `SHIBAO_EMAIL_TO` | 收件邮箱，多个邮箱可用逗号或分号分隔 |
+| `SHIBAO_EMAIL_FROM` | 发件邮箱。Resend 需要使用已验证域名，测试可用 `onboarding@resend.dev` |
+
+SMTP 方式：
+
+| Secret | 说明 |
+|---|---|
+| `SHIBAO_EMAIL_USER` | SMTP 登录邮箱 |
+| `SHIBAO_EMAIL_PASS` | SMTP 密码或应用专用密码 |
+| `SHIBAO_EMAIL_TO` | 收件邮箱，多个邮箱可用逗号或分号分隔 |
+| `SHIBAO_EMAIL_FROM` | 发件邮箱，通常与 `SHIBAO_EMAIL_USER` 一致 |
+| `SHIBAO_SMTP_HOST` | 可选，默认 `smtp-mail.outlook.com` |
+| `SHIBAO_SMTP_PORT` | 可选，默认 `587` |
+
+如果同时配置 Resend 和 SMTP，脚本会优先使用 Resend；Resend 失败时自动回退到 SMTP。
+
+#### 手动测试
+
+在 GitHub 仓库打开：
+
+`Actions` -> `Daily Shibao Email` -> `Run workflow`
+
+如果邮件未配置或发送失败，Actions 会失败，方便你直接从运行日志里定位问题。
+
 ### 安装每日自动任务
 
 右键点击 `install_task.ps1` -> 使用 PowerShell 运行。

@@ -238,21 +238,23 @@ def extract_user_section(content: str) -> str:
 
 def replace_auto_section(full_content: str, new_auto_content: str) -> str:
     """
-    替换文件中的自动生成区域内容。
+    替换文件中的自动生成区域内容，并刷新自动生成区域之前的文件头。
     如果文件没有标记，则将新内容插入到文件开头。
     """
-    # 如果新内容包含完整 frontmatter，只保留 MARKER 起始之后的部分
-    if MARKER_START in new_auto_content:
-        start = new_auto_content.index(MARKER_START)
-        new_auto_content = new_auto_content[start:]
+    if MARKER_END in new_auto_content:
+        new_end = new_auto_content.index(MARKER_END) + len(MARKER_END)
+        replacement_content = new_auto_content[:new_end]
+    elif MARKER_START in new_auto_content:
+        replacement_content = new_auto_content[new_auto_content.index(MARKER_START):]
+    else:
+        replacement_content = new_auto_content
 
     if MARKER_START in full_content and MARKER_END in full_content:
-        start_idx = full_content.index(MARKER_START)
         end_idx = full_content.index(MARKER_END) + len(MARKER_END)
         user_section = full_content[end_idx:]
-        return full_content[:start_idx] + new_auto_content + user_section
+        return replacement_content + user_section
     else:
-        return new_auto_content + "\n\n" + full_content.strip() + "\n"
+        return replacement_content + "\n\n" + full_content.strip() + "\n"
 
 
 def has_auto_markers(content: str) -> bool:

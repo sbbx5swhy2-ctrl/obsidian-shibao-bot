@@ -1,21 +1,17 @@
-name: 每日时报邮件
+锘縩ame: Daily Shibao Email
 
 on:
   schedule:
-    # 北京时间每天早上 6:00 (UTC 22:00)
-    - cron: "0 22 * * *"
+    - cron: "0 6 * * *"
+      timezone: "Asia/Shanghai"
   workflow_dispatch:
-    inputs:
-      mode:
-        description: "运行模式"
-        type: choice
-        options:
-          - email
-          - obsidian
-        default: email
 
 permissions:
   contents: write
+
+concurrency:
+  group: daily-shibao-email
+  cancel-in-progress: false
 
 jobs:
   daily-report:
@@ -23,39 +19,42 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - name: 检出代码
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: 设置 Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: pip
 
-      - name: 安装依赖
+      - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: 设置时区
-        run: |
-          sudo timedatectl set-timezone Asia/Shanghai
+      - name: Set timezone
+        run: sudo timedatectl set-timezone Asia/Shanghai
 
-      - name: 运行时报机器人
+      - name: Send daily report email
         env:
-          SHIBAO_MODE: ${{ inputs.mode || 'email' }}
+          SHIBAO_MODE: email
+          SHIBAO_EMAIL_TO: ${{ secrets.SHIBAO_EMAIL_TO }}
+          SHIBAO_EMAIL_FROM: ${{ secrets.SHIBAO_EMAIL_FROM }}
+          SHIBAO_RESEND_KEY: ${{ secrets.SHIBAO_RESEND_KEY }}
           SHIBAO_EMAIL_USER: ${{ secrets.SHIBAO_EMAIL_USER }}
           SHIBAO_EMAIL_PASS: ${{ secrets.SHIBAO_EMAIL_PASS }}
-          SHIBAO_EMAIL_TO: ${{ secrets.SHIBAO_EMAIL_TO }}
-          SHIBAO_RESEND_KEY: ${{ secrets.SHIBAO_RESEND_KEY }}
+          SHIBAO_SMTP_HOST: ${{ secrets.SHIBAO_SMTP_HOST }}
+          SHIBAO_SMTP_PORT: ${{ secrets.SHIBAO_SMTP_PORT }}
         run: python -m src.main
 
-      - name: 提交状态更新
+      - name: Commit seen state
         if: success()
         run: |
           git config user.name "shibao-bot"
           git config user.email "bot@shibao.local"
           git add state/seen.json
           if git diff --cached --quiet; then
-            echo "状态无变化，跳过提交"
+            echo "No seen state changes."
           else
-            git commit -m "chore: 更新 seen.json [skip ci]"
+            git commit -m "chore: update seen state [skip ci]"
             git push
           fi

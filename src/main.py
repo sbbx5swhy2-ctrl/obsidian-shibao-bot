@@ -204,11 +204,14 @@ class ShibaoBot:
                     has_content=has_content,
                 )
                 subject = f"时报 | {self.today_str}"
-                ok = email_sender.send_dual(html_body, md_content, subject)
+                attachment_filename = f"shibao-{self.today_str}.md"
+                ok = email_sender.send_report(html_body, md_content, subject, attachment_filename)
                 if not ok:
                     logger.error("邮件发送失败，请检查 SMTP 配置和网络连接")
+                    return 1
             else:
-                logger.warning("邮件模式启用但未配置环境变量，跳过发送")
+                logger.error("邮件模式启用但未配置环境变量，无法发送日报")
+                return 1
 
         # 16. 写入文件（obsidian 模式）
         if mode == "obsidian" and self.writer:
